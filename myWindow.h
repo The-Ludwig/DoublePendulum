@@ -39,7 +39,13 @@ public:
      * 
      */
     virtual ~MyWindow();
-    //start();
+
+    /**
+     * @brief starts the calculating
+     * 
+     * @param milliSecondsDT time between each calculating step (the smaller the better) 
+     */
+    void start(unsigned int milliSecondsDT);
 
 private:
     /**

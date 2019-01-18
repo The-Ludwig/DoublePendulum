@@ -5,14 +5,10 @@ MyWindow::MyWindow(unsigned int sizeX, unsigned int sizeY)
     : pd(), a1(1.5), a2(0), av1(0), av2(0), aa1(0), aa2(0), l1(1), l2(1), M(0.5), g(10)
 {
     // window init
-    set_title("Doppel Pendel");
+    set_title("Double Pendulum");
     set_default_size(sizeX, sizeY);
     add(pd);
     pd.show();
-
-    // Recalculate 60 times a second
-    timeout = Glib::signal_timeout().connect( sigc::mem_fun(*this,
-              &MyWindow::reCalculatePendulum), 1);
 
     lastTime = std::chrono::system_clock::now();
 }
@@ -44,4 +40,11 @@ bool MyWindow::reCalculatePendulum()
     BOOST_LOG_TRIVIAL(debug) << "Teta2'' = " << int(aa2) << "\t" << "Teta2' = " << int(av2) << "\t" << "Teta2 = " << int(a2);
 
     return true;
+}
+
+void MyWindow::start(unsigned int milliSecondsDT)
+{
+    // Recalculate 60 times a second
+    timeout = Glib::signal_timeout().connect( sigc::mem_fun(*this,
+              &MyWindow::reCalculatePendulum), milliSecondsDT);
 }
