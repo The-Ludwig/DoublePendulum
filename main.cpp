@@ -3,11 +3,14 @@
 
 int main(int argc, char *argv[])
 {
+  // Gtkmm stuff
   auto app =
     Gtk::Application::create(argc, argv,
       "org.gtkmm.examples.base");
 
-   MyWindow win(400, 400);
+  // construct new window
+  MyWindow win(400, 400);
 
-   return app->run(win);
+  // start main loop
+  return app->run(win);
 }
