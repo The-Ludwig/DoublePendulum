@@ -2,8 +2,10 @@
 #include <boost/log/trivial.hpp>
 
 MyWindow::MyWindow(unsigned int sizeX, unsigned int sizeY)
-    : pd(), a1(1.5), a2(0), av1(0), av2(0), aa1(0), aa2(0), l1(1), l2(1), M(0.5), g(10)
+    : pd(), a1(1.5), a2(0), av1(0), av2(0), aa1(0), aa2(0), l1(1), l2(1), m1(1), m2(100), g(9.81)
 {
+    M = m2/(m1+m2); 
+
     // window init
     set_title("Double Pendulum");
     set_default_size(sizeX, sizeY);
@@ -28,10 +30,10 @@ bool MyWindow::reCalculatePendulum()
     while(dT > physicalTime)
     {
         aa1 = (-M * av1 * av1 * sin(a1 - a2) * cos(a1-a2) + g/l1 * M * sin(a1) * cos(a1-a2) - M * l2/l1 * av2 * av2 * sin(a1-a2) - g/l1 * sin(a1))
-                / (1 - M * cos(a1-a2) * cos(a1-a2));
+                / (1.0 - M * cos(a1-a2) * cos(a1-a2));
 
         aa2 = (M * av2 * av2 * sin(a1-a2) * cos(a1-a2) + g/l2 * sin(a1) * cos(a1-a2) + l1/l2 * av1 * av1 * sin(a1-a2) - g/l2 *sin(a2))
-                /(1-M*cos(a1-a2)*cos(a1-a2));
+                /(1.0 - M*cos(a1-a2)*cos(a1-a2));
 
         av1 += aa1 * physicalTime;
         av2 += aa2 * physicalTime;
@@ -46,10 +48,10 @@ bool MyWindow::reCalculatePendulum()
     if(dT != 0)
     {
         aa1 = (-M * av1 * av1 * sin(a1 - a2) * cos(a1-a2) + g/l1 * M * sin(a1) * cos(a1-a2) - M * l2/l1 * av2 * av2 * sin(a1-a2) - g/l1 * sin(a1))
-                / (1 - M * cos(a1-a2) * cos(a1-a2));
+                / (1.0 - M * cos(a1-a2) * cos(a1-a2));
 
         aa2 = (M * av2 * av2 * sin(a1-a2) * cos(a1-a2) + g/l2 * sin(a1) * cos(a1-a2) + l1/l2 * av1 * av1 * sin(a1-a2) - g/l2 *sin(a2))
-                /(1-M*cos(a1-a2)*cos(a1-a2));
+                /(1.0 - M*cos(a1-a2)*cos(a1-a2));
 
         av1 += aa1 * (dT);
         av2 += aa2 * (dT);
@@ -61,8 +63,8 @@ bool MyWindow::reCalculatePendulum()
     pd.drawPendulum(a1, a2, l1 * 100, l2 * 100);
     lastTime = std::chrono::system_clock::now();
 
-    BOOST_LOG_TRIVIAL(debug) << "Teta1'' = " << int(aa1) << "\t" << "Teta1' = " << int(av1) << "\t" << "Teta1 = " << int(a1);
-    BOOST_LOG_TRIVIAL(debug) << "Teta2'' = " << int(aa2) << "\t" << "Teta2' = " << int(av2) << "\t" << "Teta2 = " << int(a2);
+    BOOST_LOG_TRIVIAL(debug) << "Total Energy in the system: " << (m1+m2)/2.0 * l1 * l1* av1 * av1 + m2/2.0 * l2 * l2 * av2 * av2 + m2 * l1 * l2 * av1* av2 * cos(a1 -a2)
+    - (m1 + m2) * g * l1 * cos(a1) - m2 * g * l2 * cos(a2);
 
     return true;
 }
