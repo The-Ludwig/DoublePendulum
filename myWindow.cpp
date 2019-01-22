@@ -21,17 +21,42 @@ MyWindow::~MyWindow()
 bool MyWindow::reCalculatePendulum()
 {
     double dT = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - lastTime).count()/1000.0;
-    aa1 = (-M * av1 * av1 * sin(a1 - a2) * cos(a1-a2) + g/l1 * M * sin(a1) * cos(a1-a2) - M * l2/l1 * av2 * av2 * sin(a1-a2) - g/l1 * sin(a1))
-            / (1 - M * cos(a1-a2) * cos(a1-a2));
 
-    aa2 = (M * av2 * av2 * sin(a1-a2) * cos(a1-a2) + g/l2 * sin(a1) * cos(a1-a2) + l1/l2 * av1 * av1 * sin(a1-a2) - g/l2 *sin(a2))
-            /(1-M*cos(a1-a2)*cos(a1-a2));
+    // approximate penduluum every micorsecond
+    double physicalTime = 0.000001;
 
-    av1 += aa1 * dT;
-    av2 += aa2 * dT;
+    while(dT > physicalTime)
+    {
+        aa1 = (-M * av1 * av1 * sin(a1 - a2) * cos(a1-a2) + g/l1 * M * sin(a1) * cos(a1-a2) - M * l2/l1 * av2 * av2 * sin(a1-a2) - g/l1 * sin(a1))
+                / (1 - M * cos(a1-a2) * cos(a1-a2));
 
-    a1 += av1 * dT;
-    a2 += av2 * dT;
+        aa2 = (M * av2 * av2 * sin(a1-a2) * cos(a1-a2) + g/l2 * sin(a1) * cos(a1-a2) + l1/l2 * av1 * av1 * sin(a1-a2) - g/l2 *sin(a2))
+                /(1-M*cos(a1-a2)*cos(a1-a2));
+
+        av1 += aa1 * physicalTime;
+        av2 += aa2 * physicalTime;
+
+        a1 += av1 * physicalTime;
+        a2 += av2 * physicalTime;
+
+        dT -= physicalTime;
+    }
+
+    // catch up to real time pased
+    if(dT != 0)
+    {
+        aa1 = (-M * av1 * av1 * sin(a1 - a2) * cos(a1-a2) + g/l1 * M * sin(a1) * cos(a1-a2) - M * l2/l1 * av2 * av2 * sin(a1-a2) - g/l1 * sin(a1))
+                / (1 - M * cos(a1-a2) * cos(a1-a2));
+
+        aa2 = (M * av2 * av2 * sin(a1-a2) * cos(a1-a2) + g/l2 * sin(a1) * cos(a1-a2) + l1/l2 * av1 * av1 * sin(a1-a2) - g/l2 *sin(a2))
+                /(1-M*cos(a1-a2)*cos(a1-a2));
+
+        av1 += aa1 * (dT);
+        av2 += aa2 * (dT);
+
+        a1 += av1 * (dT);
+        a2 += av2 * (dT);
+    }
 
     pd.drawPendulum(a1, a2, l1 * 100, l2 * 100);
     lastTime = std::chrono::system_clock::now();

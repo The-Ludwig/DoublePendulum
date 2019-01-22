@@ -13,7 +13,9 @@ int main(int argc, char *argv[])
 
   // ToDo: read in parameters to use
 
-  win.start(1);
+  //start with ~60 repaints a second
+  win.start(17);
+  
   // start main loop
   return app->run(win);
 }

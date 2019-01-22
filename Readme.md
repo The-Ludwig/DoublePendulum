@@ -3,8 +3,7 @@
 This is currently only a quick try to implement a visualization of a double pendulum in c++ using the cross platform graphics lib "gtkmm".
 
 ## The Physics
-I tried to calculate the equation myself by deriving them in the Lagrange-formalism. Currently something seems to be a bit of, an the 
-hole system explodes after some time. 
+I tried to calculate the equation myself by deriving them in the Lagrange-formalism. Seems that the calculations were right, the movement seems plausible.
 
 ## The code
 There are some obvious improvements to be done, they are coming.
