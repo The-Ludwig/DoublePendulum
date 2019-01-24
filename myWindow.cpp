@@ -2,7 +2,7 @@
 #include <boost/log/trivial.hpp>
 
 MyWindow::MyWindow(unsigned int sizeX, unsigned int sizeY)
-    : pd(), a1(1.5), a2(0), av1(0), av2(0), aa1(0), aa2(0), l1(1), l2(1), m1(1), m2(100), g(9.81)
+    : pd(), a1(3), a2(0), av1(0), av2(0), aa1(0), aa2(0), l1(1), l2(1), m1(1), m2(1), g(9.81)
 {
     M = m2/(m1+m2); 
 
@@ -29,11 +29,12 @@ bool MyWindow::reCalculatePendulum()
 
     while(dT > physicalTime)
     {
-        aa1 = (-M * av1 * av1 * sin(a1 - a2) * cos(a1-a2) + g/l1 * M * sin(a1) * cos(a1-a2) - M * l2/l1 * av2 * av2 * sin(a1-a2) - g/l1 * sin(a1))
-                / (1.0 - M * cos(a1-a2) * cos(a1-a2));
+        double denom = 2 * m1 + m2 - m2 * cos(2 * a1 - 2* a2);
+        aa1 = (-g*(2*m1+m2)*sin(a1) - m2 * g * sin(a1 - 2 * a2) - 2 *sin(a1-a2) * m2 * (av2 * av2 * l2 + av1 * av1 * l1 * cos(a1 - a2)))
+                / (l1 * denom);
 
-        aa2 = (M * av2 * av2 * sin(a1-a2) * cos(a1-a2) + g/l2 * sin(a1) * cos(a1-a2) + l1/l2 * av1 * av1 * sin(a1-a2) - g/l2 *sin(a2))
-                /(1.0 - M*cos(a1-a2)*cos(a1-a2));
+        aa2 = (2 * sin(a1-a2) * (av1 * av1 * l1 * (m1+m2)+ g*(m1+m2)*cos(a1) + av2 * av2 * l2 * m2* cos(a1-a2)))
+                /(l2 * denom);
 
         av1 += aa1 * physicalTime;
         av2 += aa2 * physicalTime;
@@ -47,23 +48,24 @@ bool MyWindow::reCalculatePendulum()
     // catch up to real time pased
     if(dT != 0)
     {
-        aa1 = (-M * av1 * av1 * sin(a1 - a2) * cos(a1-a2) + g/l1 * M * sin(a1) * cos(a1-a2) - M * l2/l1 * av2 * av2 * sin(a1-a2) - g/l1 * sin(a1))
-                / (1.0 - M * cos(a1-a2) * cos(a1-a2));
+        double denom = 2 * m1 + m2 - m2 * cos(2 * a1 - 2* a2);
+        aa1 = (-g*(2*m1+m2)*sin(a1) - m2 * g * sin(a1 - 2 * a2) - 2 *sin(a1-a2) * m2 * (av2 * av2 * l2 + av1 * av1 * l1 * cos(a1 - a2)))
+                / (l1 * denom);
 
-        aa2 = (M * av2 * av2 * sin(a1-a2) * cos(a1-a2) + g/l2 * sin(a1) * cos(a1-a2) + l1/l2 * av1 * av1 * sin(a1-a2) - g/l2 *sin(a2))
-                /(1.0 - M*cos(a1-a2)*cos(a1-a2));
+        aa2 = (2 * sin(a1-a2) * (av1 * av1 * l1 * (m1+m2)+ g*(m1+m2)*cos(a1) + av2 * av2 * l2 * m2* cos(a1-a2)))
+                /(l2 * denom);
 
-        av1 += aa1 * (dT);
-        av2 += aa2 * (dT);
+        av1 += aa1 * physicalTime;
+        av2 += aa2 * physicalTime;
 
-        a1 += av1 * (dT);
-        a2 += av2 * (dT);
+        a1 += av1 * physicalTime;
+        a2 += av2 * physicalTime;
     }
 
     pd.drawPendulum(a1, a2, l1 * 100, l2 * 100);
     lastTime = std::chrono::system_clock::now();
 
-    BOOST_LOG_TRIVIAL(debug) << "Total Energy in the system: " << (m1+m2)/2.0 * l1 * l1* av1 * av1 + m2/2.0 * l2 * l2 * av2 * av2 + m2 * l1 * l2 * av1* av2 * cos(a1 -a2)
+    BOOST_LOG_TRIVIAL(debug) << "Total Energy in the system: " << ((m1+m2)/2.0) * l1 * l1* av1 * av1 + (m2/2.0) * l2 * l2 * av2 * av2 + m2 * l1 * l2 * av1* av2 * cos(a1 -a2)
     - (m1 + m2) * g * l1 * cos(a1) - m2 * g * l2 * cos(a2);
 
     return true;
