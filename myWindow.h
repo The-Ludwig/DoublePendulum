@@ -11,21 +11,15 @@
 class MyWindow : public Gtk::Window
 {
 private: 
-    // Physical values (M = mass constant, calculated later, aa1 = angular acceleration 1)
-    double M, aa1, aa2;
     // drawing area for pendulums
     PendulumDrawer pd;
     // Slot wich povides a call every x seconds
     sigc::connection timeout;
-    // for checking time differences
-    std::chrono::system_clock::time_point lastTime;
+
+    Gtk::Box hBoxMaster, vBoxSettings;
+    Gtk::Scale mass1, mass2, length1, length2;
 
 public:
-    // Physical values which change (a1 = angle 1, ..., av1 = angular velocity 1, ...)
-    double a1, a2, av1, av2; 
-    // Physical constants (l1 = length 1, ..., m1 = mass1, ..., g = gravitationl acceleration)
-    double l1, l2, m1, m2, g;
-
     /**
      * @brief Construct a new My Window object
      * 
@@ -46,14 +40,5 @@ public:
      * @param milliSecondsDT time between each calculating step (the smaller the better) 
      */
     void start(unsigned int milliSecondsDT);
-
-private:
-    /**
-     * @brief Called upon each physical frame 
-     * 
-     * @return true success
-     * @return false not implemented yet
-     */
-    bool reCalculatePendulum();
 
 };
