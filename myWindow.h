@@ -17,11 +17,15 @@ protected:
     // Slot wich povides a call every x seconds
     sigc::connection timeout;
 
-    Gtk::HBox hBoxMaster, hBoxMass1, hBoxMass2, hBoxLength1, hBoxLength2, hBoxG;
+    Gtk::HBox hBoxMaster, hBoxMass1, hBoxMass2, hBoxLength1, hBoxLength2, hBoxG, hBoxTrace;
     Gtk::VBox vBoxSettings;
-    Gtk::SpinButton mass1, mass2, length1, length2, gValue;
-    Gtk::Label labelMass1, labelMass2, labelLength1, labelLength2, labelG;
-    Gtk::Label unitMass1, unitLength1, unitMass2, unitLength2, unitG;
+    Gtk::SpinButton mass1, mass2, length1, length2, gValue, trace;
+    Gtk::Label labelMass1, labelMass2, labelLength1, labelLength2, labelG, labelTrace;
+    Gtk::Label unitMass1, unitLength1, unitMass2, unitLength2, unitG, unitTrace;
+    Gtk::Alignment buttonAlign;
+    Gtk::Button clearTrace;
+    Gtk::HBox hBoxEnergy;
+    Gtk::Label totalEnergy, energyFront, energyBack;
 
 public:
     /**
@@ -45,10 +49,18 @@ public:
      */
     void start(unsigned int milliSecondsDT);
 
+    /**
+     * @brief sets the total energy label 
+     * 
+     */
+    void setTotalEnergyLabel(double energy);
+
 protected:
     void onMass1Change();
     void onMass2Change();
     void onLength1Change();
     void onLength2Change();
     void onGChange();
+    void onTraceChange();
+    void onClearTrace();
 };

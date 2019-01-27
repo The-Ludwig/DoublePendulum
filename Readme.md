@@ -1,8 +1,12 @@
-# Double Pendulum in c++
+# Double pendulum in c++
 
-This is currently only a quick try to implement a visualization of a double pendulum in c++ using the cross platform graphics lib "gtkmm".
+Double pendulum visualization in c++ using the cross platform graphics lib "gtkmm".
+
+![screenshot of the double pendulum](./Demo.png "Demo")
 
 ## The Physics
+The color of the trace indicates the anglular velocity of each pendulum in that moment(Red value: First pendulum, blue value: second pendulum).
+
 I tried to calculate the equation myself by deriving them in the Lagrange-formalism.
 After failing at that two times (or not be patient enough to simplifiy everything with trigonometric 
 identities), I ended up using formulas somebody in the internet derived with an equation solver.

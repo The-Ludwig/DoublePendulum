@@ -3,8 +3,9 @@
 PendulumDrawer::PendulumDrawer()
     : a1(M_PI), a2(M_PI), av1(0), av2(0), aa1(0), aa2(0), 
     l1(3), l2(2), m1(1), m2(3), g(9.81),
-    button1(false), button3(false)
-{
+    button1(false), button3(false),
+    trace(0), trace_size(1000)
+{ 
     lastTime = std::chrono::system_clock::now();
 
     add_events(Gdk::EventMask::BUTTON_PRESS_MASK | Gdk::EventMask::BUTTON_RELEASE_MASK | Gdk::EventMask::BUTTON1_MOTION_MASK | Gdk::EventMask::BUTTON3_MOTION_MASK);
@@ -25,6 +26,11 @@ PendulumDrawer::PendulumDrawer()
 PendulumDrawer::~PendulumDrawer()
 {
 
+}
+
+void PendulumDrawer::clearTrace()
+{
+    trace.clear();
 }
 
 bool PendulumDrawer::reCalculatePendulum()
@@ -72,6 +78,11 @@ bool PendulumDrawer::reCalculatePendulum()
         a2 += av2 * physicalTime;
     }
     
+    if(av1 > maxAv1)
+        maxAv1 = av1;
+    if(av2 > maxAv2)
+        maxAv2 = av2;
+
     // draw
     queue_draw();
 
@@ -79,6 +90,8 @@ bool PendulumDrawer::reCalculatePendulum()
 
     //BOOST_LOG_TRIVIAL(debug) << "Total Energy in the system: " << ((m1+m2)/2.0) * l1 * l1* av1 * av1 + (m2/2.0) * l2 * l2 * av2 * av2 + m2 * l1 * l2 * av1* av2 * cos(a1 -a2)
     //- (m1 + m2) * g * l1 * cos(a1) - m2 * g * l2 * cos(a2);
+
+    signalEnergy.emit(((m1+m2)/2.0) * l1 * l1* av1 * av1 + (m2/2.0) * l2 * l2 * av2 * av2 + m2 * l1 * l2 * av1* av2 * cos(a1 -a2) - (m1 + m2) * g * l1 * cos(a1) - m2 * g * l2 * cos(a2));
 
     return true;
 }
@@ -132,6 +145,27 @@ bool PendulumDrawer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     posX2 = posX1 + int(sin(a2) * l2 * scale);
     posY2 = posY1 + int(cos(a2) * l2 * scale);
 
+    //add point to trace
+    trace.push_front({unsigned(xc+posX2), unsigned(yc+posY2), av1/maxAv1, av2/maxAv2});
+    while(trace.size() > trace_size)
+        trace.pop_back();
+
+    // draw trace
+    cr->set_line_width(1);
+    cr->set_source_rgba(1, 1, 1, 1);
+    cr->move_to(trace.front().x, trace.front().y);
+    double alpha = 1;
+    double decreaseAlpha = 1.0/double(trace.size());
+    for(auto& point : trace)
+    {
+        cr->set_source_rgba(point.av1, 0, point.av2, alpha);
+        cr->line_to(point.x, point.y);
+        cr->stroke();
+        cr->move_to(point.x, point.y);
+        alpha -= decreaseAlpha;
+    }
+    cr->stroke();
+
     cr->set_line_width(5.0);
 
     // draw second line
@@ -142,6 +176,7 @@ bool PendulumDrawer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     
     // draw second mass
     cr->arc(xc+posX2, yc+posY2, 5 * std::sqrt(m2), 0.0, 2.0 * M_PI); // full circle
+
     cr->set_source_rgb(0.0, 0.0, 0.8);
     cr->fill_preserve();
     cr->stroke();
@@ -185,6 +220,9 @@ bool PendulumDrawer::onButtonPress(GdkEventButton* event)
     BOOST_LOG_TRIVIAL(debug) << "Button " << event->button << "  was pressed";
     if(event->button != 1  && event->button != 3)
         return false;
+
+    pointerX = event->x;
+    pointerY = event->y;
 
     if(event->button == 1)
     {

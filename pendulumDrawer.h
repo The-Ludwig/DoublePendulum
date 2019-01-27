@@ -1,7 +1,7 @@
 #pragma once
 #include <gtkmm-3.0/gtkmm.h>
 #include <boost/log/trivial.hpp>
-
+#include <deque>
 
 class PendulumDrawer : public Gtk::DrawingArea
 {
@@ -20,6 +20,20 @@ protected:
     //buttons pressed?
     bool button1, button3;
     double pointerX, pointerY;
+
+    //to draw a trace
+    struct point
+    {
+        unsigned int x;
+        unsigned int y;
+        double av1, av2;
+    };
+    //modify from outside (again to lazy to write setters)
+public:
+    unsigned int trace_size;
+protected:
+    std::deque<point> trace;
+    double maxAv1, maxAv2;
 
     // Physical constants (l1 = length 1, ..., m1 = mass1, ..., g = gravitationl acceleration), which can be saved from outside (too lazy to implement setters...)
 public:
@@ -50,6 +64,14 @@ public:
      * @return false not implemented yet
      */
     bool reCalculatePendulum();
+
+    /**
+     * @brief clears the trace
+     * 
+     */
+    void clearTrace();
+
+    sigc::signal1<void, double> signalEnergy;
 
 protected:
     /**
