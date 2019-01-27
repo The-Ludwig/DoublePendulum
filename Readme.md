@@ -12,8 +12,8 @@ After failing at that two times (or not be patient enough to simplifiy everythin
 identities), I ended up using formulas somebody in the internet derived with an equation solver.
 
 I came up with:
-$$ \ddot{\varphi}_1 = \frac{-\frac{m_2}{m_1+m_2}\dot\varphi_1^2 \sin(\varphi_1 - \varphi_2)\cos(\varphi_1 - \varphi_2)+ \frac{m_2}{m_1+m_2} \frac{g}{l_1}\sin(\varphi_2)\cos(\varphi_1 - \varphi_2)- \frac{m_2}{m_1+m_2}\frac{l_2}{l_1}\dot\varphi_2^2\sin(\varphi_1 - \varphi_2)-\frac{g}{l_1}\sin(\varphi_1)}{1-\frac{m_2}{m_1+m_2} \cos (\varphi_1 - \varphi_2)} $$
-$$ \ddot{\varphi}_2 = \frac{\frac{m_2}{m_1+m_2}\dot\varphi_2^2 \sin(\varphi_1 - \varphi_2)\cos(\varphi_1 - \varphi_2)+  \frac{g}{l_2}\sin(\varphi_1)\cos(\varphi_1 - \varphi_2)+ \frac{l_1}{l_2}\dot\varphi_1^2\sin(\varphi_1 - \varphi_2)-\frac{g}{l_2}\sin(\varphi_2)}{1-\frac{m_2}{m_1+m_2} \cos (\varphi_1 - \varphi_2)} $$
+
+![$$ \ddot{\varphi}_1 = \frac{-\frac{m_2}{m_1+m_2}\dot\varphi_1^2 \sin(\varphi_1 - \varphi_2)\cos(\varphi_1 - \varphi_2)+ \frac{m_2}{m_1+m_2} \frac{g}{l_1}\sin(\varphi_2)\cos(\varphi_1 - \varphi_2)- \frac{m_2}{m_1+m_2}\frac{l_2}{l_1}\dot\varphi_2^2\sin(\varphi_1 - \varphi_2)-\frac{g}{l_1}\sin(\varphi_1)}{1-\frac{m_2}{m_1+m_2} \cos (\varphi_1 - \varphi_2)} $$ $$ \ddot{\varphi}_2 = \frac{\frac{m_2}{m_1+m_2}\dot\varphi_2^2 \sin(\varphi_1 - \varphi_2)\cos(\varphi_1 - \varphi_2)+  \frac{g}{l_2}\sin(\varphi_1)\cos(\varphi_1 - \varphi_2)+ \frac{l_1}{l_2}\dot\varphi_1^2\sin(\varphi_1 - \varphi_2)-\frac{g}{l_2}\sin(\varphi_2)}{1-\frac{m_2}{m_1+m_2} \cos (\varphi_1 - \varphi_2)} $$](Formulas.png)
 
 But [these](https://www.myphysicslab.com/pendulum/double-pendulum-en.html) people worked something different out (which maybe can be rearanged to equal my solution).
 
